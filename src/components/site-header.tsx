@@ -3,7 +3,8 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import { HeaderAccount } from "@/components/user-menu";
-import { auth } from "@/lib/auth";
+import { env } from "@/lib/env";
+import { getAuth } from "@/lib/auth";
 import { hindSiliguri } from "@/fonts";
 
 function HeaderShell({ right }: { right?: ReactNode }) {
@@ -33,7 +34,11 @@ export function HeaderFallback() {
 }
 
 export async function SiteHeader() {
-  const session = await auth.api.getSession({
+  if (!env("BETTER_AUTH_MONGODB_URL")) {
+    return <HeaderShell right={<HeaderAccount user={null} />} />;
+  }
+
+  const session = await getAuth().api.getSession({
     headers: await headers(),
   });
 

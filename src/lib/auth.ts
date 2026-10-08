@@ -2,23 +2,39 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
 import { MongoClient } from "mongodb";
+import { env } from "@/lib/env";
 
-const client = new MongoClient(process.env.BETTER_AUTH_MONGODB_URL as string);
-const db = client.db();
+function createAuth() {
+  const mongodbUrl = env("BETTER_AUTH_MONGODB_URL");
+  if (!mongodbUrl) {
+    throw new Error("BETTER_AUTH_MONGODB_URL is not set");
+  }
 
-export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL,
-  database: mongodbAdapter(db, {
-    client,
-  }),
-  emailAndPassword: {
-    enabled: true,
-  },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+  const client = globalForAuth.mongoClient ?? new MongoClient(mongodbUrl);
+  globalForAuth.mongoClient = client;
+
+  return betterAuth({
+    baseURL: env("BETTER_AUTH_URL"),
+    database: mongodbAdapter(client.db(), { client }),
+    emailAndPassword: {
+      enabled: true,
     },
-  },
-  plugins: [nextCookies()],
-});
+    socialProviders: {
+      google: {
+        clientId: env("GOOGLE_CLIENT_ID") ?? "",
+        clientSecret: env("GOOGLE_CLIENT_SECRET") ?? "",
+      },
+    },
+    plugins: [nextCookies()],
+  });
+}
+
+const globalForAuth = globalThis as typeof globalThis & {
+  mongoClient?: MongoClient;
+  auth?: ReturnType<typeof createAuth>;
+};
+
+export function getAuth() {
+  globalForAuth.auth ??= createAuth();
+  return globalForAuth.auth;
+}

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { CategoryChips } from "@/components/category-chips";
 import { HeaderFallback, SiteHeader } from "@/components/site-header";
+import { Ticker } from "@/components/ticker";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Suspense>
             <CategoryChips />
           </header>
-          <div className="ticker w-full" />
+          <Ticker />
           <main className="mx-auto w-full max-w-[1280px] flex-1">{children}</main>
           <footer className="mx-auto w-full max-w-[1280px]" />
         </div>
