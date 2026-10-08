@@ -9,7 +9,7 @@ import { hindSiliguri } from "@/fonts";
 function HeaderShell({ right }: { right?: ReactNode }) {
   return (
     <div
-      className={`${hindSiliguri.className} mx-auto flex h-[68px] w-[1164px] items-center gap-3 px-4 py-3`}
+      className={`${hindSiliguri.className} mx-auto flex h-[68px] w-full max-w-[1280px] items-center gap-3 px-4 py-3`}
     >
       <Link href="/" className="flex items-center gap-2">
         <Image src="/logo.png" alt="" width={40} height={40} priority />

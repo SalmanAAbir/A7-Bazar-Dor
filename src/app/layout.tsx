@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
+import { CategoryChips } from "@/components/category-chips";
 import { HeaderFallback, SiteHeader } from "@/components/site-header";
 import "./globals.css";
 
@@ -26,15 +27,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#f0f5f0]">
-        <div className="mx-auto flex min-h-full w-[1440px] flex-col bg-[#f0f5f0]">
+        <div className="flex min-h-full w-full flex-col bg-[#f0f5f0]">
           <header className="bg-[#fafcfa]/95">
             <Suspense fallback={<HeaderFallback />}>
               <SiteHeader />
             </Suspense>
+            <CategoryChips />
           </header>
-          <div className="ticker" />
-          <main className="flex-1">{children}</main>
-          <footer />
+          <div className="ticker w-full" />
+          <main className="mx-auto w-full max-w-[1280px] flex-1">{children}</main>
+          <footer className="mx-auto w-full max-w-[1280px]" />
         </div>
       </body>
     </html>
