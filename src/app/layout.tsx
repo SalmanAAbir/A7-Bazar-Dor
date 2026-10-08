@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { LoggedOutHeader } from "@/components/logged-out-header";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,7 +24,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full bg-[#f0f5f0]">
+        <div className="mx-auto flex min-h-full w-[1440px] flex-col bg-[#f0f5f0]">
+          <header className="bg-[#fafcfa]/95">
+            <LoggedOutHeader />
+          </header>
+          <div className="ticker" />
+          <main className="flex-1">{children}</main>
+          <footer />
+        </div>
+      </body>
     </html>
   );
 }
