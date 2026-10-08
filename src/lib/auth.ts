@@ -1,12 +1,19 @@
-import { DatabaseSync } from "node:sqlite";
 import { betterAuth } from "better-auth";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
-import { getMigrations } from "better-auth/db/migration";
+import { MongoClient } from "mongodb";
 
-const database = new DatabaseSync(`${process.cwd()}/auth.sqlite`);
+const client = new MongoClient(process.env.BETTER_AUTH_MONGODB_URL as string);
+const db = client.db();
 
-const options = {
-  database,
+export const auth = betterAuth({
+  baseURL: process.env.BETTER_AUTH_URL,
+  database: mongodbAdapter(db, {
+    client,
+  }),
+  emailAndPassword: {
+    enabled: true,
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -14,10 +21,4 @@ const options = {
     },
   },
   plugins: [nextCookies()],
-};
-
-export const auth = betterAuth(options);
-
-export const authReady = getMigrations(options).then((plan) =>
-  plan.runMigrations(),
-);
+});

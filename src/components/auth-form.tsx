@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { hindSiliguri } from "@/fonts";
+import { authClient } from "@/lib/auth-client";
 
 function GitHubIcon() {
   return (
@@ -55,6 +60,26 @@ function SocialRow() {
 }
 
 export function SignInForm() {
+  const router = useRouter();
+  const [error, setError] = useState("");
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    const form = new FormData(event.currentTarget);
+    const { error: signInError } = await authClient.signIn.email({
+      email: String(form.get("email") ?? ""),
+      password: String(form.get("password") ?? ""),
+      callbackURL: "/",
+    });
+    if (signInError) {
+      setError(signInError.message ?? "");
+      return;
+    }
+    router.push("/");
+    router.refresh();
+  }
+
   return (
     <div
       className={`${hindSiliguri.className} flex w-full justify-center`}
@@ -69,7 +94,7 @@ export function SignInForm() {
           </p>
         </div>
         <div className="w-[416px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-6">
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <Field
               label="ইমেইল"
               name="email"
@@ -82,8 +107,11 @@ export function SignInForm() {
               type="password"
               placeholder="কমপক্ষে ৮ অক্ষর"
             />
+            {error ? (
+              <p className="text-[14px] leading-5 text-[#1d271f]">{error}</p>
+            ) : null}
             <button
-              type="button"
+              type="submit"
               className="h-10 w-full rounded-lg border border-[#047f39] bg-[#05893e] text-[14px] leading-[21px] font-semibold text-[#f3fbf4]"
             >
               সাইন ইন
@@ -114,6 +142,32 @@ export function SignInForm() {
 }
 
 export function SignUpForm() {
+  const router = useRouter();
+  const [error, setError] = useState("");
+
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    const form = new FormData(event.currentTarget);
+    const password = String(form.get("password") ?? "");
+    if (password !== String(form.get("confirmPassword") ?? "")) {
+      setError("পাসওয়ার্ড মিলছে না");
+      return;
+    }
+    const { error: signUpError } = await authClient.signUp.email({
+      name: String(form.get("name") ?? ""),
+      email: String(form.get("email") ?? ""),
+      password,
+      callbackURL: "/",
+    });
+    if (signUpError) {
+      setError(signUpError.message ?? "");
+      return;
+    }
+    router.push("/");
+    router.refresh();
+  }
+
   return (
     <div
       className={`${hindSiliguri.className} flex w-full justify-center`}
@@ -128,7 +182,7 @@ export function SignUpForm() {
           </p>
         </div>
         <div className="w-[416px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-6">
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <Field
               label="নাম"
               name="name"
@@ -153,8 +207,11 @@ export function SignUpForm() {
               type="password"
               placeholder="আবার লিখুন"
             />
+            {error ? (
+              <p className="text-[14px] leading-5 text-[#1d271f]">{error}</p>
+            ) : null}
             <button
-              type="button"
+              type="submit"
               className="h-10 w-full rounded-lg border border-[#047f39] bg-[#05893e] text-[14px] leading-[21px] font-semibold text-[#f3fbf4]"
             >
               অ্যাকাউন্ট তৈরি করুন
