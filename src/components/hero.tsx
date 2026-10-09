@@ -12,12 +12,12 @@ export function Hero() {
         <h1 className="mt-2 text-[36px] leading-[45px] font-bold text-[#1d271f]">
           আজকের বাজারের দাম এক নজরে
         </h1>
-        <button
-          type="button"
-          className="mt-2 flex h-10 items-center rounded-lg border border-[#047f39] bg-[#05893e] px-[17px] text-[14px] leading-[21px] font-semibold text-[#f3fbf4] hover:border-[#037333] hover:bg-[#047c37]"
+        <a
+          href="#সব-পণ্য"
+          className="mt-2 flex h-10 w-fit items-center rounded-lg border border-[#047f39] bg-[#05893e] px-[17px] text-[14px] leading-[21px] font-semibold text-[#f3fbf4] hover:border-[#037333] hover:bg-[#047c37]"
         >
           সব পণ্য দেখুন
-        </button>
+        </a>
         <p className="mt-10 text-[16px] leading-6 text-[#1d271f]/70">
           চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক
           বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।

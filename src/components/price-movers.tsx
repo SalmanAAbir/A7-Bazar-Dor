@@ -1,64 +1,47 @@
 import { ProductCard } from "@/components/product-card";
+import {
+  changeDirection,
+  percentLabel,
+  priceLabel,
+  type Product,
+} from "@/lib/bazar";
 import { hindSiliguri } from "@/fonts";
 
-const items = [
-  {
-    icon: "🧅",
-    name: "পেঁয়াজ",
-    unit: "প্রতি কেজি",
-    price: "৫৪ টাকা",
-    change: "১২.৫%",
-  },
-  {
-    icon: "🫚",
-    name: "আদা",
-    unit: "প্রতি কেজি",
-    price: "৮৫ টাকা",
-    change: "৯.০%",
-  },
-  {
-    icon: "🧈",
-    name: "মাখন (১০০ গ্রাম)",
-    unit: "প্রতি পিস",
-    price: "১৪৫ টাকা",
-    change: "৩.৬%",
-  },
-  {
-    icon: "🍆",
-    name: "বেগুন",
-    unit: "প্রতি কেজি",
-    price: "৪৪ টাকা",
-    change: "৪.৮%",
-  },
-  {
-    icon: "🥚",
-    name: "ডিম",
-    unit: "প্রতি ডজন",
-    price: "১৫৮ টাকা",
-    change: "৩.৯%",
-  },
-  {
-    icon: "🐟",
-    name: "রুই মাছ",
-    unit: "প্রতি কেজি",
-    price: "৪৬ টাকা",
-    change: "৪.৫%",
-  },
-] as const;
+const markStyle = {
+  up: { mark: "▲", color: "text-[#d03739]" },
+  down: { mark: "▼", color: "text-[#1a9951]" },
+} as const;
 
-export function PriceMovers() {
+export function PriceMovers({
+  title,
+  direction,
+  products,
+}: {
+  title: string;
+  direction: keyof typeof markStyle;
+  products: Product[];
+}) {
+  const mark = markStyle[direction];
+
   return (
     <section className={`${hindSiliguri.className} flex flex-col gap-3`}>
       <h2 className="flex items-center gap-2 text-[20px] leading-7 font-bold text-[#1d271f]">
-        <span className="text-[16px] leading-6 font-normal text-[#d03739]">
-          ▲
+        <span className={`text-[16px] leading-6 font-normal ${mark.color}`}>
+          {mark.mark}
         </span>
-        আজ দাম বেড়েছে
+        {title}
       </h2>
       <ul className="flex flex-wrap gap-4">
-        {items.map((item) => (
-          <li key={item.name} className="w-full shrink-0 md:w-[363px]">
-            <ProductCard {...item} direction="up" />
+        {products.map((product) => (
+          <li key={product.id} className="w-full shrink-0 md:w-[363px]">
+            <ProductCard
+              icon={product.emoji}
+              name={product.name}
+              unit={product.unit}
+              price={priceLabel(product.price)}
+              change={percentLabel(product.change)}
+              direction={changeDirection(product.change)}
+            />
           </li>
         ))}
       </ul>
