@@ -95,7 +95,7 @@ function AccountMenu({ user }: { user: HeaderUser }) {
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-10 items-center gap-2 rounded-lg pr-2 pl-1"
+        className="inline-flex h-8 shrink-0 items-center gap-2 rounded-lg md:h-10 md:pr-2 md:pl-1"
       >
         {user.image ? (
           <img
@@ -104,14 +104,14 @@ function AccountMenu({ user }: { user: HeaderUser }) {
             width={36}
             height={36}
             referrerPolicy="no-referrer"
-            className="size-9 rounded-[11px] object-cover"
+            className="size-8 rounded-[10px] object-cover md:size-9 md:rounded-[11px]"
           />
         ) : (
-          <span className="inline-flex size-9 items-center justify-center rounded-[11px] bg-[#05893e] text-[#f3fbf4]">
+          <span className="inline-flex size-8 items-center justify-center rounded-[10px] bg-[#05893e] text-[#f3fbf4] md:size-9 md:rounded-[11px]">
             <UserIcon className="size-4" />
           </span>
         )}
-        <span className="text-[14px] leading-5 font-medium text-[#1d271f]">
+        <span className="hidden text-[14px] leading-5 font-medium text-[#1d271f] md:inline">
           {firstName}
         </span>
         <span className="text-[12px] leading-4 font-semibold text-[#1d271f]">
@@ -160,13 +160,13 @@ function LoggedOutActions() {
     <div className="flex items-center gap-2">
       <Link
         href="/sign-in"
-        className="inline-flex h-10 w-[90px] items-center justify-center rounded-lg border border-transparent text-[14px] leading-[21px] font-semibold text-[#1d271f]"
+        className="inline-flex h-8 shrink-0 items-center justify-center rounded-lg border border-transparent px-[13px] text-[12px] leading-[18px] font-semibold text-[#1d271f] md:h-10 md:w-[90px] md:px-0 md:text-[14px] md:leading-[21px]"
       >
         সাইন ইন
       </Link>
       <Link
         href="/sign-up"
-        className="inline-flex h-10 w-[92px] items-center justify-center rounded-lg border border-[#047f39] bg-[#05893e] text-[14px] leading-[21px] font-semibold text-[#f3fbf4]"
+        className="inline-flex h-8 shrink-0 items-center justify-center rounded-lg border border-[#047f39] bg-[#05893e] px-[13px] text-[12px] leading-[18px] font-semibold text-[#f3fbf4] md:h-10 md:w-[92px] md:px-0 md:text-[14px] md:leading-[21px]"
       >
         সাইন আপ
       </Link>

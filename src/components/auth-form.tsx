@@ -84,8 +84,8 @@ export function SignInForm() {
     <div
       className={`${hindSiliguri.className} flex w-full justify-center`}
     >
-      <div className="flex w-[448px] flex-col items-center gap-6 px-4 py-10">
-        <div className="flex w-[416px] flex-col items-center gap-1 text-center">
+      <div className="flex w-full max-w-[448px] flex-col items-center gap-6 px-4 py-10">
+        <div className="flex w-full flex-col items-center gap-1 text-center">
           <h1 className="text-[24px] leading-8 font-bold text-[#1d271f]">
             সাইন ইন
           </h1>
@@ -93,7 +93,7 @@ export function SignInForm() {
             বিস্তারিত দাম, বাজার তুলনা ও প্রোফাইল দেখতে অ্যাকাউন্টে ঢুকুন।
           </p>
         </div>
-        <div className="w-[416px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-6">
+        <div className="w-full rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-6">
           <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <Field
               label="ইমেইল"
@@ -172,8 +172,8 @@ export function SignUpForm() {
     <div
       className={`${hindSiliguri.className} flex w-full justify-center`}
     >
-      <div className="flex w-[448px] flex-col items-center gap-6 px-4 py-10">
-        <div className="flex w-[416px] flex-col items-center gap-1 text-center">
+      <div className="flex w-full max-w-[448px] flex-col items-center gap-6 px-4 py-10">
+        <div className="flex w-full flex-col items-center gap-1 text-center">
           <h1 className="text-[24px] leading-8 font-bold text-[#1d271f]">
             অ্যাকাউন্ট তৈরি করুন
           </h1>
@@ -181,7 +181,7 @@ export function SignUpForm() {
             বিনা খরচে সাইন আপ করে সব বিস্তারিত দাম দেখুন।
           </p>
         </div>
-        <div className="w-[416px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-6">
+        <div className="w-full rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-6">
           <form className="flex flex-col gap-4" onSubmit={onSubmit}>
             <Field
               label="নাম"
