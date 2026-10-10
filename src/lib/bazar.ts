@@ -1,9 +1,33 @@
 import { toBengaliNumber } from "@/lib/bengali";
 
-const bases = [
-  "https://api.api-store.workers.dev/api/bazardor",
-  "https://api.abcz.workers.dev/api/bazardor",
-];
+const base = "https://openapi.programming-hero.com/api/bazardor";
+
+const unitNames: Record<string, string> = {
+  kg: "কেজি",
+  litre: "লিটার",
+  dozen: "ডজন",
+  piece: "পিস",
+};
+
+type ApiProduct = {
+  id: number | string;
+  slug: string;
+  nameBn: string;
+  category: string;
+  unit: string;
+  image: string;
+  today: number;
+  change?: {
+    dir?: string;
+    pct?: number;
+  };
+};
+
+type ApiCategory = {
+  slug: string;
+  nameBn: string;
+  icon?: string;
+};
 
 export type Product = {
   id: string;
@@ -25,142 +49,71 @@ export type BazarResult<T> =
   | { ok: true; data: T }
   | { ok: false; status: number | null };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function isProduct(value: unknown): value is ApiProduct {
+  if (typeof value !== "object" || value === null) return false;
+  return "nameBn" in value && "today" in value;
 }
 
-function listFrom(payload: unknown) {
-  if (Array.isArray(payload)) return payload;
-  if (!isRecord(payload)) return [];
-  for (const key of ["products", "data", "items", "categories", "result"]) {
-    if (Array.isArray(payload[key])) return payload[key];
-  }
-  return [];
+function isCategory(value: unknown): value is ApiCategory {
+  if (typeof value !== "object" || value === null) return false;
+  return "slug" in value && "nameBn" in value;
 }
 
-function pick(record: Record<string, unknown>, keys: string[]) {
-  for (const key of keys) {
-    const value = record[key];
-    if (value !== undefined && value !== null && value !== "") return value;
-  }
-  return undefined;
+function changeAmount(change: ApiProduct["change"]) {
+  const pct = change?.pct;
+  if (typeof pct !== "number" || !Number.isFinite(pct)) return 0;
+  if (change?.dir === "down") return -Math.abs(pct);
+  if (change?.dir === "up") return Math.abs(pct);
+  if (change?.dir === "flat") return 0;
+  return pct;
 }
 
-function numberFrom(value: unknown) {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value !== "string") return null;
-  const latin = value.replace(/[০-৯]/g, (digit) =>
-    String("০১২৩৪৫৬৭৮৯".indexOf(digit)),
-  );
-  const match = latin.replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
-  if (!match) return null;
-  const parsed = Number(match[0]);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function textFrom(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function changeFrom(record: Record<string, unknown>) {
-  const raw = pick(record, [
-    "changePercent",
-    "change_percent",
-    "priceChange",
-    "percent",
-    "percentage",
-    "change",
-  ]);
-  const amount = numberFrom(raw);
-  if (amount === null) return 0;
-  const direction = textFrom(
-    pick(record, ["direction", "trend", "changeDirection"]),
-  ).toLowerCase();
-  const rawText = textFrom(raw);
-  if (direction === "down" || rawText.includes("▼")) return -Math.abs(amount);
-  if (direction === "up" || rawText.includes("▲")) return Math.abs(amount);
-  return amount;
-}
-
-function productFrom(value: unknown, index: number): Product | null {
-  if (!isRecord(value)) return null;
-  const name = textFrom(pick(value, ["name", "title", "productName", "product_name"]));
-  const price = numberFrom(pick(value, ["price", "currentPrice", "current_price", "todayPrice"]));
-  if (!name || price === null) return null;
-  const idValue = pick(value, ["id", "slug", "_id"]);
-  const category = textFrom(
-    pick(value, ["category", "categorySlug", "category_slug", "categoryId"]),
-  );
-  const unit = textFrom(pick(value, ["unit", "unitName", "unit_name"])) || "কেজি";
+function productFrom(product: ApiProduct): Product {
+  const unit = unitNames[product.unit] ?? product.unit;
   return {
-    id: idValue === undefined ? String(index) : String(idValue),
-    name,
-    emoji: textFrom(pick(value, ["emoji", "icon", "image"])) || "🛒",
+    id: String(product.id),
+    name: product.nameBn,
+    emoji: product.image,
     unit: unit.startsWith("প্রতি") ? unit : `প্রতি ${unit}`,
-    price,
-    change: changeFrom(value),
-    category,
-  };
-}
-
-function categoryFrom(value: unknown): Category | null {
-  if (!isRecord(value)) return null;
-  const slug = textFrom(pick(value, ["slug", "id", "category", "key"]));
-  const name = textFrom(pick(value, ["name", "title", "label"]));
-  if (!slug || !name) return null;
-  return {
-    slug,
-    name,
-    emoji: textFrom(pick(value, ["emoji", "icon"])) || "",
+    price: product.today,
+    change: changeAmount(product.change),
+    category: product.category,
   };
 }
 
 async function readJson(path: string): Promise<BazarResult<unknown>> {
-  let status: number | null = null;
-  for (const base of bases) {
-    try {
-      const response = await fetch(`${base}${path}`);
-      status = response.status;
-      if (!response.ok) continue;
-      return { ok: true, data: await response.json() };
-    } catch {
-      status = null;
-    }
+  try {
+    const response = await fetch(`${base}${path}`);
+    if (!response.ok) return { ok: false, status: response.status };
+    return { ok: true, data: await response.json() };
+  } catch {
+    return { ok: false, status: null };
   }
-  return { ok: false, status };
 }
 
 export async function getProducts(category?: string): Promise<BazarResult<Product[]>> {
   const query = category ? `?category=${encodeURIComponent(category)}` : "";
   const result = await readJson(`/products${query}`);
   if (!result.ok) return result;
-  const products = listFrom(result.data)
-    .map(productFrom)
-    .filter((product): product is Product => product !== null);
-  const rows = listFrom(result.data);
-  if (products.length === 0 && rows.length > 0) {
-    const first = rows[0];
-    console.error(
-      "Bazar Dor product shape was not recognized",
-      isRecord(first) ? Object.keys(first) : first,
-    );
-  } else if (products.length > 0 && products.every((product) => product.change === 0)) {
-    const first = rows[0];
-    console.error(
-      "Bazar Dor price change field was not recognized",
-      isRecord(first) ? Object.keys(first) : first,
-    );
-  }
-  return { ok: true, data: products };
+  if (!Array.isArray(result.data)) return { ok: false, status: null };
+  return {
+    ok: true,
+    data: result.data.filter(isProduct).map(productFrom),
+  };
 }
 
 export async function getCategories(): Promise<BazarResult<Category[]>> {
   const result = await readJson("/categories");
   if (!result.ok) return result;
-  const categories = listFrom(result.data)
-    .map(categoryFrom)
-    .filter((category): category is Category => category !== null);
-  return { ok: true, data: categories };
+  if (!Array.isArray(result.data)) return { ok: false, status: null };
+  return {
+    ok: true,
+    data: result.data.filter(isCategory).map((category) => ({
+      slug: category.slug,
+      name: category.nameBn,
+      emoji: category.icon ?? "",
+    })),
+  };
 }
 
 export function priceLabel(price: number) {
