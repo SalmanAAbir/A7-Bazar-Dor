@@ -124,7 +124,7 @@ export function SignInForm() {
             <SocialRow />
             <p className="text-center text-[14px] leading-5 text-[#1d271f]/70">
               অ্যাকাউন্ট নেই?{" "}
-              <Link href="/sign-up" className="text-[#05893e]">
+              <Link href="/signup" className="text-[#05893e]">
                 সাইন আপ করুন
               </Link>
             </p>
@@ -164,7 +164,7 @@ export function SignUpForm() {
       name,
       email,
       password,
-      callbackURL: "/sign-in",
+      callbackURL: "/signin",
     });
     if (signUpError) {
       showError(signUpError.message || "অ্যাকাউন্ট তৈরি করা যায়নি", setError);
@@ -172,7 +172,7 @@ export function SignUpForm() {
     }
     await authClient.signOut();
     toast.success("অ্যাকাউন্ট তৈরি হয়েছে। এখন সাইন ইন করুন");
-    router.push("/sign-in");
+    router.push("/signin");
     router.refresh();
   }
 
@@ -232,7 +232,7 @@ export function SignUpForm() {
             <SocialRow />
             <p className="text-center text-[14px] leading-5 text-[#1d271f]/70">
               অ্যাকাউন্ট আছে?{" "}
-              <Link href="/sign-in" className="text-[#05893e]">
+              <Link href="/signin" className="text-[#05893e]">
                 সাইন ইন করুন
               </Link>
             </p>

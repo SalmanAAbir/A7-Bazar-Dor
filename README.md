@@ -12,8 +12,10 @@
 
 ## Features
 
-- Sign in and sign up with email or Google
+- Sign in and sign up with email, Google, or GitHub
 - Category navigation across the market groups
 - A scrolling price ticker under the header
 - Today's biggest price rises and falls
 - The full product list, loaded from the Bazar Dor API
+- Product details with minimum, maximum, and average prices, plus prices by market
+- Profile page with a name update

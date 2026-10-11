@@ -8,7 +8,7 @@ import { env } from "@/lib/env";
 
 async function UpdateBody() {
   if (!env("BETTER_AUTH_MONGODB_URL")) {
-    redirect("/sign-in?reason=protected&next=/profile/update");
+    redirect("/signin?reason=protected&next=/profile/update");
   }
 
   const session = await getAuth().api.getSession({
@@ -16,7 +16,7 @@ async function UpdateBody() {
   });
 
   if (!session) {
-    redirect("/sign-in?reason=protected&next=/profile/update");
+    redirect("/signin?reason=protected&next=/profile/update");
   }
 
   return (

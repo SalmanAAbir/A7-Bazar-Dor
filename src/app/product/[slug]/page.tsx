@@ -40,7 +40,7 @@ async function ProductBody({
 
   if (!signedIn) {
     redirect(
-      `/sign-in?reason=protected&next=${encodeURIComponent(`/product/${slug}`)}`,
+      `/signin?reason=protected&next=${encodeURIComponent(`/product/${slug}`)}`,
     );
   }
 

@@ -165,13 +165,13 @@ function LoggedOutActions() {
   return (
     <div className="flex items-center gap-2">
       <Link
-        href="/sign-in"
+        href="/signin"
         className="inline-flex h-8 shrink-0 items-center justify-center rounded-lg border border-transparent px-[13px] text-[12px] leading-[18px] font-semibold text-[#1d271f] md:h-10 md:w-[90px] md:px-0 md:text-[14px] md:leading-[21px]"
       >
         সাইন ইন
       </Link>
       <Link
-        href="/sign-up"
+        href="/signup"
         className="inline-flex h-8 shrink-0 items-center justify-center rounded-lg border border-[#047f39] bg-[#05893e] px-[13px] text-[12px] leading-[18px] font-semibold text-[#f3fbf4] md:h-10 md:w-[92px] md:px-0 md:text-[14px] md:leading-[21px]"
       >
         সাইন আপ
