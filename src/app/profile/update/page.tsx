@@ -1,8 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { ProfileUpdateForm } from "@/components/profile-update-form";
-import { hindSiliguri } from "@/fonts";
+import { ProfilePanel } from "@/components/profile-panel";
 import { getAuth } from "@/lib/auth";
 import { env } from "@/lib/env";
 
@@ -20,17 +19,11 @@ async function UpdateBody() {
   }
 
   return (
-    <div className={`${hindSiliguri.className} flex flex-col items-start gap-4`}>
-      <div>
-        <h1 className="text-[24px] leading-8 font-bold text-[#1d271f]">
-          তথ্য আপডেট
-        </h1>
-        <p className="mt-1 text-[14px] leading-5 text-[#1d271f]/70">
-          আপনার নাম বদলান
-        </p>
-      </div>
-      <ProfileUpdateForm name={session.user.name} />
-    </div>
+    <ProfilePanel
+      name={session.user.name}
+      email={session.user.email}
+      image={session.user.image}
+    />
   );
 }
 
@@ -38,7 +31,9 @@ export default function ProfileUpdatePage() {
   return (
     <div className="px-4 py-6">
       <Suspense
-        fallback={<div className="h-48 w-full max-w-[448px] animate-pulse rounded-2xl bg-[#fafcfa]" />}
+        fallback={
+          <div className="mx-auto h-64 w-full max-w-[720px] animate-pulse rounded-2xl bg-[#fafcfa]" />
+        }
       >
         <UpdateBody />
       </Suspense>
