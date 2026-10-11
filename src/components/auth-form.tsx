@@ -1,22 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import toast from "react-hot-toast";
+import { GitHubSignInButton } from "@/components/github-sign-in-button";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { hindSiliguri } from "@/fonts";
 import { authClient } from "@/lib/auth-client";
-
-function GitHubIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true">
-      <path
-        fill="#1d271f"
-        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.7 7.7 0 0 1 8 4.77c.68 0 1.36.09 2 .26 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-      />
-    </svg>
-  );
-}
+import { safeNextPath } from "@/lib/safe-next";
 
 function Field({
   label,
@@ -48,35 +40,43 @@ function SocialRow() {
   return (
     <div className="flex gap-2">
       <GoogleSignInButton />
-      <button
-        type="button"
-        className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#e1e8e1] bg-[#fafcfa] px-4 text-[14px] leading-[21px] font-semibold text-[#1d271f]"
-      >
-        <GitHubIcon />
-        GitHub দিয়ে চালিয়ে যান
-      </button>
+      <GitHubSignInButton />
     </div>
   );
 }
 
+function showError(message: string, setError: (value: string) => void) {
+  setError(message);
+  toast.error(message);
+}
+
 export function SignInForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState("");
+  const nextPath = safeNextPath(searchParams.get("next"));
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     const form = new FormData(event.currentTarget);
-    const { error: signInError } = await authClient.signIn.email({
-      email: String(form.get("email") ?? ""),
-      password: String(form.get("password") ?? ""),
-      callbackURL: "/",
-    });
-    if (signInError) {
-      setError(signInError.message ?? "");
+    const email = String(form.get("email") ?? "").trim();
+    const password = String(form.get("password") ?? "");
+    if (!email || !password) {
+      showError("ইমেইল ও পাসওয়ার্ড দিন", setError);
       return;
     }
-    router.push("/");
+    const { error: signInError } = await authClient.signIn.email({
+      email,
+      password,
+      callbackURL: nextPath,
+    });
+    if (signInError) {
+      showError(signInError.message || "সাইন ইন করা যায়নি", setError);
+      return;
+    }
+    toast.success("সাইন ইন হয়েছে");
+    router.push(nextPath);
     router.refresh();
   }
 
@@ -149,22 +149,30 @@ export function SignUpForm() {
     event.preventDefault();
     setError("");
     const form = new FormData(event.currentTarget);
+    const name = String(form.get("name") ?? "").trim();
+    const email = String(form.get("email") ?? "").trim();
     const password = String(form.get("password") ?? "");
+    if (!name || !email || !password) {
+      showError("নাম, ইমেইল ও পাসওয়ার্ড দিন", setError);
+      return;
+    }
     if (password !== String(form.get("confirmPassword") ?? "")) {
-      setError("পাসওয়ার্ড মিলছে না");
+      showError("পাসওয়ার্ড মিলছে না", setError);
       return;
     }
     const { error: signUpError } = await authClient.signUp.email({
-      name: String(form.get("name") ?? ""),
-      email: String(form.get("email") ?? ""),
+      name,
+      email,
       password,
-      callbackURL: "/",
+      callbackURL: "/sign-in",
     });
     if (signUpError) {
-      setError(signUpError.message ?? "");
+      showError(signUpError.message || "অ্যাকাউন্ট তৈরি করা যায়নি", setError);
       return;
     }
-    router.push("/");
+    await authClient.signOut();
+    toast.success("অ্যাকাউন্ট তৈরি হয়েছে। এখন সাইন ইন করুন");
+    router.push("/sign-in");
     router.refresh();
   }
 

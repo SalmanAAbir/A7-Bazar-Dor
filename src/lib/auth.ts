@@ -12,6 +12,8 @@ function createAuth() {
 
   const client = globalForAuth.mongoClient ?? new MongoClient(mongodbUrl);
   globalForAuth.mongoClient = client;
+  const githubId = env("GITHUB_CLIENT_ID");
+  const githubSecret = env("GITHUB_CLIENT_SECRET");
 
   return betterAuth({
     baseURL: env("BETTER_AUTH_URL"),
@@ -24,6 +26,14 @@ function createAuth() {
         clientId: env("GOOGLE_CLIENT_ID") ?? "",
         clientSecret: env("GOOGLE_CLIENT_SECRET") ?? "",
       },
+      ...(githubId && githubSecret
+        ? {
+            github: {
+              clientId: githubId,
+              clientSecret: githubSecret,
+            },
+          }
+        : {}),
     },
     plugins: [nextCookies()],
   });

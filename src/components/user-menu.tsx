@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
 export type HeaderUser = {
@@ -83,8 +84,13 @@ function AccountMenu({ user }: { user: HeaderUser }) {
   }, [open]);
 
   async function signOut() {
-    await authClient.signOut();
+    const { error } = await authClient.signOut();
+    if (error) {
+      toast.error(error.message ?? "সাইন আউট করা যায়নি");
+      return;
+    }
     setOpen(false);
+    toast.success("সাইন আউট হয়েছে");
     router.refresh();
   }
 

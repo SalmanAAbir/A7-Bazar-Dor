@@ -4,6 +4,8 @@ const envNames = [
   "BETTER_AUTH_MONGODB_URL",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
+  "GITHUB_CLIENT_ID",
+  "GITHUB_CLIENT_SECRET",
 ] as const;
 
 export type EnvName = (typeof envNames)[number];

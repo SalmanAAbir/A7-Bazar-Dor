@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CategoryProducts } from "@/components/category-products";
 import { ProductSkeletons } from "@/components/product-skeletons";
@@ -24,6 +25,14 @@ async function CategoryBody({
     );
   }
 
+  const category = categories.ok
+    ? categories.data.find((item) => item.slug === slug)
+    : undefined;
+
+  if (categories.ok && !category) {
+    notFound();
+  }
+
   if (products.data.length === 0) {
     return (
       <div className={`${hindSiliguri.className} flex flex-col items-start gap-4`}>
@@ -39,10 +48,6 @@ async function CategoryBody({
       </div>
     );
   }
-
-  const category = categories.ok
-    ? categories.data.find((item) => item.slug === slug)
-    : undefined;
 
   return (
     <CategoryProducts

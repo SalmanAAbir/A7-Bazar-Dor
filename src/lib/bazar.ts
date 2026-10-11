@@ -14,13 +14,17 @@ type ApiProduct = {
   slug: string;
   nameBn: string;
   category: string;
+  categoryNameBn?: string;
+  categoryIcon?: string;
   unit: string;
   image: string;
   today: number;
+  yesterday?: number;
   change?: {
     dir?: string;
     pct?: number;
   };
+  markets?: unknown;
 };
 
 type ApiCategory = {
@@ -31,12 +35,27 @@ type ApiCategory = {
 
 export type Product = {
   id: string;
+  slug: string;
   name: string;
   emoji: string;
   unit: string;
   price: number;
   change: number;
   category: string;
+};
+
+export type MarketPrice = {
+  market: string;
+  division: string;
+  min: number;
+  max: number;
+};
+
+export type ProductDetail = Product & {
+  categoryName: string;
+  categoryEmoji: string;
+  yesterday: number;
+  markets: MarketPrice[];
 };
 
 export type Category = {
@@ -68,16 +87,45 @@ function changeAmount(change: ApiProduct["change"]) {
   return pct;
 }
 
+function unitLabel(unit: string) {
+  const name = unitNames[unit] ?? unit;
+  return name.startsWith("প্রতি") ? name : `প্রতি ${name}`;
+}
+
+function isMarket(value: unknown): value is MarketPrice {
+  if (typeof value !== "object" || value === null) return false;
+  const market = value as MarketPrice;
+  return (
+    typeof market.market === "string" &&
+    typeof market.division === "string" &&
+    typeof market.min === "number" &&
+    typeof market.max === "number"
+  );
+}
+
 function productFrom(product: ApiProduct): Product {
-  const unit = unitNames[product.unit] ?? product.unit;
   return {
     id: String(product.id),
+    slug: product.slug,
     name: product.nameBn,
     emoji: product.image,
-    unit: unit.startsWith("প্রতি") ? unit : `প্রতি ${unit}`,
+    unit: unitLabel(product.unit),
     price: product.today,
     change: changeAmount(product.change),
     category: product.category,
+  };
+}
+
+function detailFrom(product: ApiProduct): ProductDetail {
+  const markets = Array.isArray(product.markets)
+    ? product.markets.filter(isMarket)
+    : [];
+  return {
+    ...productFrom(product),
+    categoryName: product.categoryNameBn ?? product.category,
+    categoryEmoji: product.categoryIcon ?? "",
+    yesterday: typeof product.yesterday === "number" ? product.yesterday : product.today,
+    markets,
   };
 }
 
@@ -100,6 +148,18 @@ export async function getProducts(category?: string): Promise<BazarResult<Produc
     ok: true,
     data: result.data.filter(isProduct).map(productFrom),
   };
+}
+
+export async function getProduct(
+  slug: string,
+): Promise<BazarResult<ProductDetail | null>> {
+  const result = await readJson(`/products?slug=${encodeURIComponent(slug)}`);
+  if (!result.ok) return result;
+  if (!Array.isArray(result.data)) return { ok: false, status: null };
+  const match = result.data.find(
+    (item): item is ApiProduct => isProduct(item) && item.slug === slug,
+  );
+  return { ok: true, data: match ? detailFrom(match) : null };
 }
 
 export async function getCategories(): Promise<BazarResult<Category[]>> {

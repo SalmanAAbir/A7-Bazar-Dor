@@ -59,6 +59,7 @@ export function CategoryProducts({
         {ordered.map((product) => (
           <li key={product.id} className="w-full shrink-0 md:w-[363px]">
             <ProductCard
+              href={`/product/${product.slug}`}
               icon={product.emoji}
               name={product.name}
               unit={product.unit}

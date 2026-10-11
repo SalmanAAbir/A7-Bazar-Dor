@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
+import { AppToaster } from "@/components/app-toaster";
 import { CategoryChips } from "@/components/category-chips";
 import { CategoryNav } from "@/components/category-nav";
 import { Footer } from "@/components/footer";
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </Suspense>
           <main className="mx-auto w-full max-w-[1280px] flex-1">{children}</main>
           <Footer />
+          <AppToaster />
         </div>
       </body>
     </html>

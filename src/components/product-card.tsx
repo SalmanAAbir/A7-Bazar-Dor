@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { hindSiliguri } from "@/fonts";
 
 const changeColor = {
@@ -13,6 +14,7 @@ export function ProductCard({
   price = "৫৪ টাকা",
   change = "১২.৫%",
   direction = "up",
+  href,
 }: {
   icon?: string;
   name?: string;
@@ -20,10 +22,11 @@ export function ProductCard({
   price?: string;
   change?: string;
   direction?: keyof typeof changeColor;
+  href?: string;
 }) {
   const mark = direction === "down" ? "▼" : direction === "flat" ? "—" : "▲";
 
-  return (
+  const card = (
     <article
       className={`${hindSiliguri.className} w-full max-w-[363px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] hover:border-[#05893e]`}
     >
@@ -55,5 +58,13 @@ export function ProductCard({
         </div>
       </div>
     </article>
+  );
+
+  if (!href) return card;
+
+  return (
+    <Link href={href} className="block w-full max-w-[363px]">
+      {card}
+    </Link>
   );
 }
