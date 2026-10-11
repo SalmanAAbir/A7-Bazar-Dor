@@ -30,7 +30,7 @@ export function GitHubSignInButton() {
             }
           });
       }}
-      className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#e1e8e1] bg-[#fafcfa] px-4 text-[14px] leading-[21px] font-semibold text-[#1d271f]"
+      className="inline-flex h-10 min-w-0 flex-1 items-center justify-center gap-1 overflow-hidden rounded-lg border border-[#e1e8e1] bg-[#fafcfa] px-1.5 text-[12px] leading-[21px] font-semibold whitespace-nowrap text-[#1d271f] min-[360px]:text-[13px] sm:px-4 sm:text-[14px]"
     >
       <GitHubIcon />
       GitHub দিয়ে চালিয়ে যান

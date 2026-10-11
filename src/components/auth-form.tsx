@@ -38,7 +38,7 @@ function Field({
 
 function SocialRow() {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-1.5">
       <GoogleSignInButton />
       <GitHubSignInButton />
     </div>
@@ -84,7 +84,7 @@ export function SignInForm() {
     <div
       className={`${hindSiliguri.className} flex w-full justify-center`}
     >
-      <div className="flex w-full max-w-[448px] flex-col items-center gap-6 px-4 py-10">
+      <div className="flex w-full max-w-[32rem] flex-col items-center gap-6 px-3 py-10 sm:px-4">
         <div className="flex w-full flex-col items-center gap-1 text-center">
           <h1 className="text-[24px] leading-8 font-bold text-[#1d271f]">
             সাইন ইন
@@ -180,7 +180,7 @@ export function SignUpForm() {
     <div
       className={`${hindSiliguri.className} flex w-full justify-center`}
     >
-      <div className="flex w-full max-w-[448px] flex-col items-center gap-6 px-4 py-10">
+      <div className="flex w-full max-w-[32rem] flex-col items-center gap-6 px-3 py-10 sm:px-4">
         <div className="flex w-full flex-col items-center gap-1 text-center">
           <h1 className="text-[24px] leading-8 font-bold text-[#1d271f]">
             অ্যাকাউন্ট তৈরি করুন

@@ -28,21 +28,21 @@ export function ProductCard({
 
   const card = (
     <article
-      className={`${hindSiliguri.className} w-full max-w-[363px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] hover:border-[#05893e]`}
+      className={`${hindSiliguri.className} w-full rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] hover:border-[#05893e]`}
     >
-      <div className="flex flex-col gap-3 p-4">
-        <div className="flex items-start gap-3">
-          <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#f0f5f0] text-[24px] leading-8 text-[#1d271f]">
+      <div className="flex flex-col gap-3 p-3 sm:p-4">
+        <div className="flex items-start gap-2 sm:gap-3">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#f0f5f0] text-[20px] leading-7 text-[#1d271f] sm:size-12 sm:text-[24px] sm:leading-8">
             {icon}
           </div>
-          <div>
-            <p className="text-[16px] leading-6 font-semibold text-[#1d271f]">
+          <div className="min-w-0">
+            <p className="text-[14px] leading-5 font-semibold wrap-break-word text-[#1d271f] sm:text-[16px] sm:leading-6">
               {name}
             </p>
             <p className="text-[12px] leading-4 text-[#1d271f]/60">{unit}</p>
           </div>
         </div>
-        <div className="flex items-end justify-between">
+        <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <p className="text-[12px] leading-4 text-[#1d271f]/70">আজকের দাম</p>
             <p className="text-[20px] leading-7 font-bold text-[#1d271f]">
@@ -63,7 +63,7 @@ export function ProductCard({
   if (!href) return card;
 
   return (
-    <Link href={href} className="block w-full max-w-[363px]">
+    <Link href={href} className="block w-full">
       {card}
     </Link>
   );

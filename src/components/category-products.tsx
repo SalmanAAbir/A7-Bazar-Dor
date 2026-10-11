@@ -55,9 +55,9 @@ export function CategoryProducts({
           ))}
         </select>
       </label>
-      <ul className="flex flex-wrap gap-4">
+      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
         {ordered.map((product) => (
-          <li key={product.id} className="w-full shrink-0 md:w-[363px]">
+          <li key={product.id}>
             <ProductCard
               href={`/product/${product.slug}`}
               icon={product.emoji}
